@@ -113,7 +113,11 @@ module.exports = (
       },
     },
     resolveLoader: {
-      modules: [paths.appNodeModules, paths.ownNodeModules],
+      modules: [
+        paths.appPath,
+        paths.appNodeModules,
+        paths.ownNodeModules
+      ],
     },
     module: {
       strictExportPresence: true,

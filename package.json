@@ -1,13 +1,13 @@
 {
-  "name": "@tangible/builder-react",
+  "name": "@tangible/react-builder",
   "version": "1.0.0",
   "description": "Build full-stack React applications",
   "author": "Team Tangible <support@teamtangible.com>",
-  "repository": "git@github.com:tangibleinc/react-builder.git",
+  "repository": "git@github.com:tangibleinc/tangible-react-builder.git",
   "license": "MIT",
   "main": "index.js",
   "bin": {
-    "tgbr": "./run"
+    "trb": "./run"
   },
   "files": [
     "babel.js",
@@ -46,6 +46,7 @@
     "jest-message-util": "^26.0.1",
     "mini-css-extract-plugin": "^0.9.0",
     "mri": "^1.1.4",
+    "node-fetch": "^2.6.0",
     "node-sass-chokidar": "^1.4.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-flexbugs-fixes": "^4.2.1",
@@ -69,7 +70,6 @@
     "webpack": "^4.42.0",
     "webpack-dev-server": "~3.10.3",
     "webpack-manifest-plugin": "^2.2.0",
-    "webpack-node-externals": "^1.7.2",
-    "webpackbar": "^4.0.0"
+    "webpack-node-externals": "^1.7.2"
   }
 }
