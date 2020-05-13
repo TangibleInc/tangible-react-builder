@@ -2,6 +2,8 @@ var ProgressBar = require('progress')
 var chalk = require('chalk')
 var webpack = require('webpack')
 
+const ranAlready = {}
+
 module.exports = function ProgressBarPlugin(options) {
   options = options || {}
 
@@ -45,9 +47,10 @@ module.exports = function ProgressBarPlugin(options) {
   var lastPercent = 0
 
   return new webpack.ProgressPlugin(function (percent, msg) {
-    if (!running && lastPercent !== 0 && !customSummary) {
-      stream.write('\n')
-    }
+
+    // if (!running && lastPercent !== 0 && !customSummary) {
+    //   stream.write('\n')
+    // }
 
     var newPercent = Math.floor(percent * barOptions.width)
 
@@ -55,7 +58,8 @@ module.exports = function ProgressBarPlugin(options) {
       lastPercent = percent
     }
 
-    bar && bar.update(percent, {
+    // Only show progress bar for first run of this name
+    bar && !ranAlready[name] && bar.update(percent, {
       msg: msg
     })
 
@@ -68,6 +72,8 @@ module.exports = function ProgressBarPlugin(options) {
       var buildTime = (now - startTime) / 1000 + 's'
 
       bar && bar.terminate()
+
+      ranAlready[name] = true
 
       if (summary) {
         stream.write(chalk.green(`${name}`)+` Built in ${buildTime}\n`)

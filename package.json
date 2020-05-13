@@ -1,18 +1,20 @@
 {
   "name": "@tangible/react-builder",
-  "version": "1.0.0",
-  "description": "Build full-stack React applications",
+  "version": "1.0.1",
+  "description": "Build React full-stack applications and static sites",
   "author": "Team Tangible <support@teamtangible.com>",
   "repository": "git@github.com:tangibleinc/tangible-react-builder.git",
   "license": "MIT",
   "main": "index.js",
   "bin": {
-    "trb": "./run"
+    "react-builder": "./run"
   },
   "files": [
     "babel.js",
+    "export.js",
     "config",
     "run",
+    "plugins",
     "scripts",
     "utils"
   ],

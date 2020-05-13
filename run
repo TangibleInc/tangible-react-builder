@@ -3,7 +3,7 @@
 const sade = require('sade')
 const spawn = require('react-dev-utils/crossSpawn')
 const pkg = require('./package.json')
-const prog = sade('tgbr')
+const prog = sade('react-builder')
 prog.version(pkg.version)
 
 prog
