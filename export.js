@@ -7,19 +7,28 @@ module.exports = function handleExport(config = {}) {
   if (process.env.APP_EXPORT!=='1' || !config.routes) return
 
   const {
+    dest, // process.env.APP_PUBLIC_DIR in the app
     routes
   } = config
 
+  if (!dest) {
+    console.error('Export destination must be passed in "dest" property')
+    process.exit()
+    return
+  }
+
   const port = process.env.PORT || 3000
-  const dest = process.env.APP_PUBLIC_DIR
   const baseUrl = `http://localhost:${port}`
 
-  console.log('Export from', baseUrl)
-
-  // On next tick to ensure server is listening
+  // After next tick to ensure server is listening
   setTimeout(function() {
+
+    console.log('Export from', baseUrl)
+
     exportRoutes({
-      port, dest, baseUrl,
+      port,
+      dest,
+      baseUrl,
       routes
     }).then(() => {
       console.log('Exported to', path.relative(process.cwd(), dest))
