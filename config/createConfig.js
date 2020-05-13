@@ -100,7 +100,11 @@ module.exports = (
     // We need to tell webpack how to resolve both builder's node_modules and
     // the users', so we use resolve and resolveLoader.
     resolve: {
-      modules: ['node_modules', paths.appNodeModules].concat(
+      modules: [
+        paths.appSrc,
+        'node_modules',
+        paths.appNodeModules
+      ].concat(
         modules.additionalModulePaths || []
       ),
       extensions: ['.mjs', '.js', '.jsx', '.json'],
@@ -114,7 +118,6 @@ module.exports = (
     },
     resolveLoader: {
       modules: [
-        paths.appPath,
         paths.appNodeModules,
         paths.ownNodeModules
       ],
@@ -261,6 +264,15 @@ module.exports = (
     config.plugins = [
       // We define environment variables that can be accessed globally in our
       new webpack.DefinePlugin(dotenv.stringified),
+
+      // Server-side chunks
+      new webpack.NormalModuleReplacementPlugin(
+        /chunks$/,
+        resource => {
+          resource.request = resource.request.replace(/chunks$/, 'chunks.server')
+          return resource
+        }
+      ),
     ]
     // in dev mode emitting one huge server file on every save is very slow
     if (IS_PROD) {
@@ -368,6 +380,15 @@ module.exports = (
           return entryArrayManifest
         },
       }),
+
+      // Client-side chunks
+      new webpack.NormalModuleReplacementPlugin(
+        /chunks$/,
+        resource => {
+          resource.request = resource.request.replace(/chunks$/, 'chunks.client')
+          return resource
+        }
+      ),
     ]
 
     if (IS_DEV) {
@@ -588,7 +609,7 @@ module.exports = (
     // OK
   }
 
-  ;[
+  [
     ...builderPlugins,
     ...plugins
   ].forEach(plugin => {

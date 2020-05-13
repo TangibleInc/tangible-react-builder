@@ -66,11 +66,11 @@ var connection = new SockJS(socketUrl)
 // to avoid spamming the console. Disconnect usually happens
 // when developer stops the server.
 connection.onclose = function() {
-  if (typeof console !== 'undefined' && typeof console.info === 'function') {
-    console.info(
-      'The development server has disconnected.\nRefresh the page if necessary.'
-    )
-  }
+  // if (typeof console !== 'undefined' && typeof console.info === 'function') {
+  //   console.info(
+  //     'The development server has disconnected.\nRefresh the page if necessary.'
+  //   )
+  // }
 }
 
 // Remember some state related to hot module replacement.

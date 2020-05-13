@@ -3,6 +3,13 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const PostCssFlexBugFixes = require('postcss-flexbugs-fixes')
 const paths = require('../../config/paths')
 
+const sassOptions = {
+  includePaths: [
+    paths.appSrc,
+    paths.appNodeModules
+  ],
+}
+
 const defaultOptions = {
   postcss: {
     dev: {
@@ -26,14 +33,14 @@ const defaultOptions = {
   sass: {
     dev: {
       sourceMap: true,
-      includePaths: [paths.appNodeModules],
+      sassOptions
     },
     prod: {
       // XXX Source maps are required for the resolve-url-loader to properly
       // function. Disable them in later stages if you do not want source maps.
       sourceMap: true,
-      sourceMapContents: false,
-      includePaths: [paths.appNodeModules],
+      // sourceMapContents: false,
+      sassOptions
     },
   },
   css: {

@@ -4,32 +4,50 @@ const fs = require('fs-extra')
 
 module.exports = function handleExport(config = {}) {
 
-  if (!process.env.APP_EXPORT || !config.routes) return
+  if (process.env.APP_EXPORT!=='1' || !config.routes) return
 
-  // On next tick to ensure server is listening
-  setTimeout(function() {
-    exportRoutes(config.routes)
-  }, 0)
-}
-
-async function exportRoutes(routes) {
+  const {
+    routes
+  } = config
 
   const port = process.env.PORT || 3000
   const dest = process.env.APP_PUBLIC_DIR
   const baseUrl = `http://localhost:${port}`
 
-  const relativeDest = path.relative(process.cwd(), dest)
-
   console.log('Export from', baseUrl)
 
-  const getRoute = (route) => new Promise((resolve, reject) => {
-    fetch(route)
-      .then(res => res.text())
-      .then(resolve)
-      .catch(reject)
-  })
+  // On next tick to ensure server is listening
+  setTimeout(function() {
+    exportRoutes({
+      port, dest, baseUrl,
+      routes
+    }).then(() => {
+      console.log('Exported to', path.relative(process.cwd(), dest))
+      process.exit()
+    }).catch(e => {
+      console.error('Export failed', e)
+      process.exit()
+    })
+  }, 0)
+}
 
-  for (const route of routes) {
+const getRoute = (route) => new Promise((resolve, reject) => {
+  fetch(route)
+    .then(res => res.text())
+    .then(resolve)
+    .catch(reject)
+})
+
+async function exportRoutes({
+  dest,
+  baseUrl,
+  routes
+}) {
+
+  for (const {
+    path: route,
+    routes: childRoutes
+  } of routes) {
 
     console.log(`Export ${route}`)
 
@@ -39,9 +57,13 @@ async function exportRoutes(routes) {
 
     await fs.ensureDir(routeTargetDir)
     await fs.writeFile(routeTargetFile, html, 'utf8')
+
+    if (!childRoutes) continue
+
+    await exportRoutes({
+      dest: `${dest}${route}`,
+      baseUrl: `${baseUrl}${route}`,
+      routes: childRoutes
+    })
   }
-
-  console.log('Exported to', relativeDest)
-
-  process.exit()
 }

@@ -4,6 +4,7 @@ const preset = {
     require.resolve('@babel/preset-react'),
   ],
   plugins: [
+
     // class { handleThing = () => { } }
     require.resolve('@babel/plugin-proposal-class-properties'),
 
