@@ -1,10 +1,17 @@
 {
   "name": "@tangible/react-builder",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Build React full-stack applications and static sites",
   "author": "Team Tangible <support@teamtangible.com>",
   "repository": "git@github.com:tangibleinc/tangible-react-builder.git",
   "license": "MIT",
+  "keywords": [
+    "react",
+    "fullstack",
+    "server-side-rendering",
+    "static-site-generator",
+    "hot-reload"
+  ],
   "main": "index.js",
   "bin": {
     "react-builder": "./run"
