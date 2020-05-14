@@ -107,7 +107,7 @@ module.exports = (
       ].concat(
         modules.additionalModulePaths || []
       ),
-      extensions: ['.mjs', '.js', '.jsx', '.json'],
+      extensions: ['.mjs', '.js', '.jsx', '.json', '.ts', '.tsx'],
       alias: {
         // This is required so symlinks work during development.
         'webpack/hot/poll': require.resolve('webpack/hot/poll'),
@@ -135,8 +135,10 @@ module.exports = (
         },
         // Transform ES6 with Babel
         {
-          test: /\.(js|jsx|mjs)$/,
-          include: [paths.appSrc],
+          test: /\.(js|jsx|mjs|ts|tsx)$/,
+          // Transpile symlinked folders inside src
+          // Was include: [paths.appSrc],
+          exclude: /node_modules/,
           use: [
             {
               loader: require.resolve('babel-loader'),
@@ -296,7 +298,8 @@ module.exports = (
         require.resolve('../utils/prettyNodeErrors')
       )
 
-      const nodeArgs = ['-r',
+      const nodeArgs = [
+        '-r',
         require.resolve('source-map-support/register')
       ]
 
@@ -597,19 +600,19 @@ module.exports = (
     require('../plugins/sass'),
   ]
 
-  const appTsConfigPath = path.join(process.cwd(), 'tsconfig.json')
-  try {
-    fs.statSync(appTsConfigPath)
-    builderPlugins.push(
-      require('../plugins/typescript'),
-    )
-    // Prevent progress bar and type checker displaying at the same time
-    showProgress = false
-  } catch(e) {
-    // OK
-  }
+  // const appTsConfigPath = path.join(process.cwd(), 'tsconfig.json')
+  // try {
+  //   fs.statSync(appTsConfigPath)
+  //   builderPlugins.push(
+  //     require('../plugins/typescript'),
+  //   )
+  //   // Prevent progress bar and type checker displaying at the same time
+  //   showProgress = false
+  // } catch(e) {
+  //   // OK
+  // }
 
-  [
+  ;[
     ...builderPlugins,
     ...plugins
   ].forEach(plugin => {
