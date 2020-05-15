@@ -13,7 +13,7 @@ function modify(baseConfig, params, webpack, userOptions = {}) {
   ]
   config.resolve.extensions = [...config.resolve.extensions, '.md', '.mdx']
 
-  // Safely locate Babel-Loader in Razzle's webpack internals
+  // Safely locate Babel-Loader in builder's webpack internals
   const babelLoader = config.module.rules.find(babelLoaderFinder)
   if (!babelLoader) {
     throw new Error(`'babel-loader' required for nice 'MDX loader' work`)
@@ -24,7 +24,7 @@ function modify(baseConfig, params, webpack, userOptions = {}) {
   fileLoader.exclude = [/\.mdx?$/, ...fileLoader.exclude]
 
   // Get the correct `include` option, since that hasn't changed.
-  // This tells Razzle which directories to transform.
+  // This tells builder which directories to transform.
   const { include } = babelLoader
 
   // Configure @mdx-js/loader

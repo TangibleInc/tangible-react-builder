@@ -15,6 +15,7 @@ const getClientEnv = require('./env').getClientEnv
 const errorOverlayMiddleware = require('react-dev-utils/errorOverlayMiddleware')
 // const WebpackBar = require('webpackbar');
 const ManifestPlugin = require('webpack-manifest-plugin')
+const ProgressBarPlugin = require('../utils/ProgressBarPlugin')
 const modules = require('./modules')
 
 const postCssOptions = {
@@ -185,19 +186,16 @@ module.exports = (
         // "style" loader turns CSS into JS modules that inject <style> tags.
         // In production, we use a plugin to extract that CSS to a file, but
         // in development "style" loader enables hot editing of CSS.
-        //
-        // Note: this yields the exact same CSS config as create-react-app.
         {
           test: /\.css$/,
           use: IS_NODE
-            ? // Style-loader does not work in Node.js without some crazy
-          // magic. Luckily we just need css-loader.
+            ? // Don't use style-loader on server-side.
             [
               {
                 loader: require.resolve('css-loader'),
                 options: {
                   importLoaders: 1,
-                  modules: { auto: true },
+                  modules: { auto:  /\.?local\.\w+$/i },
                 },
               },
             ]
@@ -208,7 +206,7 @@ module.exports = (
                   loader: require.resolve('css-loader'),
                   options: {
                     importLoaders: 1,
-                    modules: { auto: true },
+                    modules: { auto:  /\.?local\.\w+$/i },
                   },
                 },
                 {
@@ -221,7 +219,8 @@ module.exports = (
                 {
                   loader: require.resolve('css-loader'),
                   options: {
-                    importLoaders: 1
+                    importLoaders: 1,
+                    modules: { auto:  /\.?local\.\w+$/i },
                   },
                 },
                 {
@@ -598,19 +597,9 @@ module.exports = (
   const builderPlugins = [
     require('../plugins/mdx'),
     require('../plugins/sass'),
+    // TODO: Type check *after* both client and server built
+    // require('../plugins/typescript')
   ]
-
-  // const appTsConfigPath = path.join(process.cwd(), 'tsconfig.json')
-  // try {
-  //   fs.statSync(appTsConfigPath)
-  //   builderPlugins.push(
-  //     require('../plugins/typescript'),
-  //   )
-  //   // Prevent progress bar and type checker displaying at the same time
-  //   showProgress = false
-  // } catch(e) {
-  //   // OK
-  // }
 
   ;[
     ...builderPlugins,
@@ -623,8 +612,6 @@ module.exports = (
       webpackObject
     )
   })
-
-  const ProgressBarPlugin = require('./progressBar')
 
   config.plugins.push(
     new ProgressBarPlugin({

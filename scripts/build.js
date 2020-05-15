@@ -11,6 +11,7 @@ process.on('unhandledRejection', err => {
 // Ensure environment variables are read.
 require('../config/env')
 
+const path = require('path')
 const webpack = require('webpack')
 const mri = require('mri')
 const fs = require('fs-extra')
@@ -20,7 +21,7 @@ const createConfig = require('../config/createConfig')
 const printErrors = require('../utils/printErrors')
 const clearConsole = require('react-dev-utils/clearConsole')
 const logger = require('../utils/logger')
-const FileSizeReporter = require('react-dev-utils/FileSizeReporter')
+const FileSizeReporter = require('../utils/FileSizeReporter')
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages')
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild
@@ -67,8 +68,8 @@ measureFileSizesBeforeBuild(paths.appBuildPublic)
         console.log()
         // console.log(chalk.green('Compiled successfully.\n'));
       }
-      console.log('File sizes after gzip:')
-      printFileSizesAfterBuild(stats, previousFileSizes, paths.appBuild)
+      console.log('Assets in', path.relative(paths.appPath, paths.appBuildPublic)+'/static\n')
+      printFileSizesAfterBuild(stats, previousFileSizes, '')
       console.log()
     },
     err => {

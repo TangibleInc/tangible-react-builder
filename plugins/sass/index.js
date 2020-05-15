@@ -47,12 +47,12 @@ const defaultOptions = {
     dev: {
       sourceMap: true,
       importLoaders: 1,
-      modules: { auto: true },
+      modules: { auto:  /\.?local\.\w+$/i },
     },
     prod: {
       sourceMap: false,
       importLoaders: 1,
-      modules: { auto: true },
+      modules: { auto:  /\.?local\.\w+$/i },
     },
   },
   style: {},
