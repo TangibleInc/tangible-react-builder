@@ -36,9 +36,6 @@ module.exports = (
   target = 'web',
   env = 'dev',
   {
-    clearConsole = true,
-    host = 'localhost',
-    port = 3000,
     modify,
     plugins = [],
     modifyBabelOptions,
@@ -75,7 +72,7 @@ module.exports = (
     console.log('Using .babelrc defined in your app root')
   }
 
-  const dotenv = getClientEnv(target, { clearConsole, host, port })
+  const dotenv = getClientEnv(target)
 
   const portOffset = clientOnly ? 0 : 1
 

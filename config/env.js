@@ -54,7 +54,7 @@ const nodePath = (process.env.NODE_PATH || '')
 // injected into the application via DefinePlugin in Webpack configuration.
 const appEnvPrefix = /^APP_/i
 
-function getClientEnvironment(target, options) {
+function getClientEnvironment(target) {
   const raw = Object.keys(process.env)
     .filter(key => appEnvPrefix.test(key))
     .reduce(
@@ -66,9 +66,9 @@ function getClientEnvironment(target, options) {
         // Useful for determining whether we’re running in production mode.
         // Most importantly, it switches React into the correct mode.
         NODE_ENV: process.env.NODE_ENV || 'development',
-        PORT: process.env.PORT || options.port || 3000,
+        PORT: process.env.PORT || 3000,
         VERBOSE: !!process.env.VERBOSE,
-        HOST: process.env.HOST || options.host || 'localhost',
+        HOST: process.env.HOST || 'localhost',
         APP_ASSETS_MANIFEST: paths.appAssetsManifest,
         APP_CHUNKS_MANIFEST: paths.appChunksManifest,
         BUILD_TARGET: target === 'web' ? 'client' : 'server',

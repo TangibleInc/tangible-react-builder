@@ -80,6 +80,7 @@ measureFileSizesBeforeBuild(paths.appBuildPublic)
   )
 
 function build(previousFileSizes) {
+
   let appConfig = {}
 
   // Check for app.config.js file
@@ -91,15 +92,6 @@ function build(previousFileSizes) {
       logger.error('Invalid app.config.js file.', e)
       process.exit(1)
     }
-  }
-
-  if (appConfig.clearConsole === false || !!appConfig.host || !!appConfig.port) {
-    logger.warn(`Specifying options \`port\`, \`host\`, and \`clearConsole\` in app.config.js has been deprecated.
-Please use a .env file instead.
-
-${appConfig.host !== 'localhost' && `HOST=${appConfig.host}`}
-${appConfig.port !== '3000' && `PORT=${appConfig.port}`}
-`)
   }
 
   let serverConfig
