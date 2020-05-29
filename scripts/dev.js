@@ -31,10 +31,7 @@ const verbose = cliArgs.verbose || false
 
 const clientOnly = cliArgs.type === 'spa'
 
-function main() {
-  // Optimistically, we make the console look exactly like the output of our
-  // FriendlyErrorsPlugin during compilation, so the user has immediate feedback.
-  // clearConsole();
+async function main() {
 
   logger.start('Building for development')
 
@@ -44,38 +41,38 @@ function main() {
   if (fs.existsSync(paths.appBuilderConfig)) {
     try {
       appConfig = require(paths.appBuilderConfig)
+      if (appConfig instanceof Function) {
+        appConfig = { prepare: appConfig }
+      }
     } catch (e) {
-      clearConsole()
       logger.error('Invalid app.config.js file.', e)
       process.exit(1)
     }
   }
 
-  if (clientOnly) {
-    // Check for public/index.html file
-    if (!fs.existsSync(paths.appHtml)) {
-      clearConsole()
-      logger.error(`index.html dose not exists public folder.`)
-      process.exit(1)
-    }
+  // Check for public/index.html file
+  if (clientOnly && !fs.existsSync(paths.appHtml)) {
+    logger.error(`index.html not found in public folder`)
+    process.exit(1)
   }
 
   // Delete assets.json and chunks.json to always have a manifest up to date
   fs.removeSync(paths.appAssetsManifest)
   fs.removeSync(paths.appChunksManifest)
 
-  // Create dev configs using our config factory, passing in app config as
-  // options.
-  let clientConfig = createConfig('web', 'dev', appConfig, webpack, clientOnly)
-  const clientCompiler = compile(clientConfig)
+  // Create dev configs using our config factory, passing in app config as options.
+  const clientConfig = createConfig('web', 'dev', appConfig, webpack, clientOnly)
+  const serverConfig = !clientOnly && createConfig('node', 'dev', appConfig, webpack)
 
-  let serverConfig
-  let serverCompiler
-
-  if (!clientOnly) {
-    serverConfig = createConfig('node', 'dev', appConfig, webpack)
-    serverCompiler = compile(serverConfig)
+  if (appConfig.prepare) {
+    await appConfig.prepare({
+      clientConfig,
+      serverConfig
+    })
   }
+
+  const clientCompiler = compile(clientConfig)
+  const serverCompiler = !clientOnly && compile(serverConfig)
 
   // Watch for build complete
 
@@ -86,7 +83,7 @@ function main() {
     if (clientOnly || doneNum===2) console.log()
   })
 
-  serverCompiler.hooks.done.tap('server', (stats) => {
+  serverCompiler && serverCompiler.hooks.done.tap('server', (stats) => {
     doneNum++
     if (doneNum===2) console.log()
   })
@@ -133,14 +130,11 @@ function main() {
   // Create a new instance of Webpack-dev-server for our client assets.
   // This will actually run on a different port than the users app.
   const clientDevServer = new devServer(clientCompiler,
-    Object.assign(clientConfig.devServer, { verbose: verbose }))
+    Object.assign(clientConfig.devServer, { verbose: verbose })
+  )
 
   // Start Webpack-dev-server
-  clientDevServer.listen(port, err => {
-    if (err) {
-      logger.error(err)
-    }
-  })
+  clientDevServer.listen(port, err => err && logger.error(err))
 }
 
 // Webpack compile in a try-catch

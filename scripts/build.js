@@ -79,7 +79,7 @@ measureFileSizesBeforeBuild(paths.appBuildPublic)
     }
   )
 
-function build(previousFileSizes) {
+async function build(previousFileSizes) {
 
   let appConfig = {}
 
@@ -87,6 +87,9 @@ function build(previousFileSizes) {
   if (fs.existsSync(paths.appBuilderConfig)) {
     try {
       appConfig = require(paths.appBuilderConfig)
+      if (appConfig instanceof Function) {
+        appConfig = { prepare: appConfig }
+      }
     } catch (e) {
       // clearConsole();
       logger.error('Invalid app.config.js file.', e)
@@ -94,25 +97,30 @@ function build(previousFileSizes) {
     }
   }
 
-  let serverConfig
 
   // Create our production webpack configurations and pass in builder options.
-  let clientConfig = createConfig('web', 'prod', appConfig, webpack, clientOnly)
-
-  if (!clientOnly) {
-    serverConfig = createConfig('node', 'prod', appConfig, webpack)
-  }
+  const clientConfig = createConfig('web', 'prod', appConfig, webpack, clientOnly)
+  const serverConfig = !clientOnly && createConfig('node', 'prod', appConfig, webpack)
 
   process.noDeprecation = true // turns off that loadQuery clutter.
 
-  logger.start('Building for production')
-  // console.log('Creating an optimized production build...');
-  // console.log('Compiling client...');
+  if (appConfig.prepare) {
+    await appConfig.prepare({
+      clientConfig,
+      serverConfig
+    })
+  }
 
-  // First compile the client. We need it to properly output assets.json (asset
-  // manifest) and chunks.json (chunk manifest) files with the correct hashes on file names BEFORE we can start
-  // the server compiler.
-  return new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
+
+    logger.start('Building for production')
+
+    /**
+     * First compile the client. We need it to properly output assets.json (asset manifest)
+     * and chunks.json (chunk manifest) files with the correct hashes on file names BEFORE
+     * we can start the server compiler.
+     */
+
     compile(clientConfig, (err, clientStats) => {
       if (err) {
         reject(err)
@@ -138,7 +146,7 @@ function build(previousFileSizes) {
         return reject(new Error(clientMessages.warnings.join('\n\n')))
       }
 
-      // console.log(chalk.green('Compiled client successfully.'));
+      // Compiled client successfully
 
       if (clientOnly) {
         return resolve({
@@ -148,7 +156,7 @@ function build(previousFileSizes) {
         })
       } else {
 
-        // console.log('Compiling server...');
+        // Compiling server
 
         compile(serverConfig, (err, serverStats) => {
           if (err) {
@@ -175,7 +183,7 @@ function build(previousFileSizes) {
             return reject(new Error(serverMessages.warnings.join('\n\n')))
           }
 
-          // console.log(chalk.green('Compiled server successfully.'));
+          // Compiled server successfully
 
           return resolve({
             stats: clientStats,
