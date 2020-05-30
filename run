@@ -20,6 +20,13 @@ prog
     runCommand('dev')
   })
 
+prog
+  .command('export')
+  .describe('Export the application as a static site.')
+  .action(() => {
+    runCommand('export')
+  })
+
 // prog
 //   .command('test')
 //   .describe('Runs the test watcher in an interactive mode.')
@@ -34,11 +41,34 @@ prog.command('help', 'Show this help message', { default:true })
 
 
 function runCommand(script) {
-  const result = spawn.sync(
-    'node',
-    [require.resolve('./scripts/' + script)].concat(process.argv.slice(3)),
-    { stdio: 'inherit' }
-  )
+
+  let result
+
+  if (script==='export') {
+    // Build for production
+    result = spawn.sync(
+      'node',
+      [require.resolve('./scripts/build')].concat(process.argv.slice(3)),
+      { stdio: 'inherit' }
+    )
+    // Export
+    if (!result.signal) {
+      process.env.APP_EXPORT = 1
+      result = spawn.sync(
+        'node',
+        ['build/server.js'],
+        { stdio: 'inherit' }
+      )
+    }
+  } else {
+    result = spawn.sync(
+      'node',
+      [require.resolve('./scripts/' + script)].concat(process.argv.slice(3)),
+      { stdio: 'inherit' }
+    )
+  }
+
+
   if (result.signal) {
     if (result.signal === 'SIGKILL') {
       console.log(
