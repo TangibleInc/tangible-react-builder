@@ -1,11 +1,35 @@
 const { babelLoaderFinder, fileLoaderFinder } = require('./helpers')
 const path = require('path')
 
-const defaultOptions = {}
+
+const defaultOptions = {
+  // https://github.com/remarkjs/remark/blob/master/doc/plugins.md#list-of-plugins
+  remarkPlugins: [
+    require('remark-attr') // {class=".."}
+  ],
+  // https://github.com/rehypejs/rehype/blob/master/doc/plugins.md
+  rehypePlugins: [
+    require('rehype-slug'), // Heading IDs
+  ]
+}
 
 function modify(baseConfig, params, webpack, userOptions = {}) {
-  const options = Object.assign({}, defaultOptions, userOptions)
-  const config = Object.assign({}, baseConfig)
+
+  const options = {
+    ...defaultOptions,
+    ...userOptions,
+    // Merge plugins
+    ...(['remarkPlugins', 'rehypePlugins'].reduce((obj, key) => {
+      obj[key] = [
+        ...defaultOptions[key],
+        ...(userOptions[key] || [])
+      ]
+      return obj
+    }, {}))
+  }
+  const config = {
+    ...baseConfig
+  }
 
   config.resolve.modules = [
     ...config.resolve.modules,
@@ -35,7 +59,7 @@ function modify(baseConfig, params, webpack, userOptions = {}) {
       ...babelLoader.use,
       {
         loader: require.resolve('@mdx-js/loader'),
-        options: Object.assign({}, options),
+        options,
       },
     ],
   }
