@@ -29,7 +29,7 @@ module.exports = function handleExport(config = {}) {
       port,
       dest,
       baseUrl,
-      routes: [...routes, { path: '/404' }]
+      routes
     }).then(() => {
       console.log('Exported to', path.relative(process.cwd(), dest))
       process.exit()
@@ -56,15 +56,17 @@ async function exportRoutes({
   for (const {
     path: route,
     routes: childRoutes
-  } of routes) {
+  } of [...routes, { path: '/404' }]) {
 
     if (!route) continue
 
     console.log(`Export ${route}`)
 
     const html = await getRoute(`${baseUrl}${route}`)
-    const routeTargetDir = path.join(dest, route)
-    const routeTargetFile = path.join(routeTargetDir, 'index.html')
+    const routeTargetDir = route==='/404' ? dest : path.join(dest, route)
+    const routeTargetFile = path.join(routeTargetDir,
+      route==='/404' ? '404.html' : 'index.html'
+    )
 
     await fs.ensureDir(routeTargetDir)
     await fs.writeFile(routeTargetFile, html, 'utf8')
