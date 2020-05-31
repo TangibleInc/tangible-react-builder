@@ -1,6 +1,6 @@
 {
   "name": "@tangible/react-builder",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Build React full-stack applications and static sites",
   "author": "Team Tangible <support@teamtangible.com>",
   "repository": "git@github.com:tangibleinc/tangible-react-builder.git",
