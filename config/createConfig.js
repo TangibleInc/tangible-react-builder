@@ -98,6 +98,9 @@ module.exports = (
     // We need to tell webpack how to resolve both builder's node_modules and
     // the users', so we use resolve and resolveLoader.
     resolve: {
+      // Don't resolve symlinks to their real paths
+      // https://webpack.js.org/configuration/resolve/#resolvesymlinks
+      symlinks: false,
       modules: [
         paths.appSrc,
         'node_modules',
@@ -105,7 +108,7 @@ module.exports = (
       ].concat(
         modules.additionalModulePaths || []
       ),
-      extensions: ['.mjs', '.js', '.jsx', '.json', '.ts', '.tsx'],
+      extensions: ['.mjs', '.js', '.jsx', '.json', '.ts', '.tsx', '.mdx'],
       alias: {
         // This is required so symlinks work during development.
         'webpack/hot/poll': require.resolve('webpack/hot/poll'),
