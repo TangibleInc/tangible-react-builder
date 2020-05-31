@@ -29,7 +29,7 @@ module.exports = function handleExport(config = {}) {
       port,
       dest,
       baseUrl,
-      routes
+      routes: [...routes, { path: '/404' }]
     }).then(() => {
       console.log('Exported to', path.relative(process.cwd(), dest))
       process.exit()
@@ -57,6 +57,8 @@ async function exportRoutes({
     path: route,
     routes: childRoutes
   } of routes) {
+
+    if (!route) continue
 
     console.log(`Export ${route}`)
 
