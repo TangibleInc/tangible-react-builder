@@ -6,9 +6,48 @@ const preset = {
   ],
   plugins: [
 
-    // class { handleThing = () => { } }
-    require.resolve('@babel/plugin-proposal-class-properties'),
+    // https://github.com/kentcdodds/babel-plugin-macros
+    require.resolve('babel-plugin-macros'),
 
+    // Stage 1
+
+    // https://babeljs.io/docs/en/next/babel-plugin-proposal-export-default-from
+    require.resolve('@babel/plugin-proposal-export-default-from'),
+
+    // https://babeljs.io/docs/en/next/babel-plugin-proposal-logical-assignment-operators
+    //require.resolve('@babel/plugin-proposal-logical-assignment-operators'),
+
+    // https://babeljs.io/docs/en/next/babel-plugin-proposal-pipeline-operator
+    [require.resolve('@babel/plugin-proposal-pipeline-operator'), { 'proposal': 'minimal' }],
+
+    // https://babeljs.io/docs/en/next/babel-plugin-proposal-do-expressions
+    require.resolve('@babel/plugin-proposal-do-expressions'),
+
+    // Stage 2
+
+    // https://babeljs.io/docs/en/next/babel-plugin-proposal-export-namespace-from
+    require.resolve('@babel/plugin-proposal-export-namespace-from'),
+
+    // https://babeljs.io/docs/en/next/babel-plugin-proposal-throw-expressions
+    require.resolve('@babel/plugin-proposal-throw-expressions'),
+
+    // Stage 3
+
+    // https://babeljs.io/docs/en/next/babel-plugin-proposal-optional-chaining
+    [require.resolve('@babel/plugin-proposal-optional-chaining'), { 'loose': false }],
+
+    // https://babeljs.io/docs/en/next/babel-plugin-proposal-nullish-coalescing-operator
+    [require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'), { 'loose': false }],
+
+    // Adds syntax support for import()
+    // Used for route/chunk-splitting
+    require.resolve('@babel/plugin-syntax-dynamic-import'),
+
+    // https://babeljs.io/docs/en/next/babel-plugin-proposal-class-properties
+    [require.resolve('@babel/plugin-proposal-class-properties'), { 'loose': false }],
+
+    // ES2018
+    // https://babeljs.io/docs/en/next/babel-plugin-proposal-object-rest-spread
     // The following plugin uses Object.assign directly, instead of Babel's
     // extends helper. Note that this assumes `Object.assign` is available.
     // { ...todo, completed: true }
@@ -18,8 +57,7 @@ const preset = {
         useBuiltIns: true,
       },
     ],
-    // Adds syntax support for import()
-    require.resolve('@babel/plugin-syntax-dynamic-import'),
+
     // Add support for async/await
     require.resolve('@babel/plugin-transform-runtime'),
   ],
