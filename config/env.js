@@ -80,9 +80,12 @@ function getClientEnvironment(target) {
         // The public dir changes between dev and prod, so we use an environment
         // variable available to users.
         APP_PUBLIC_DIR:
-          process.env.NODE_ENV === 'production'
-            ? paths.appBuildPublic
-            : paths.appPublic,
+          // Relative to server entry file
+          // To pass to express.static, use: path.resolve(path.join(__dirname, process.env.APP_PUBLIC_DIR))
+          process.env.NODE_ENV === 'production' ? 'public' : '../public'
+          // Originally using local full path
+          // process.env.NODE_ENV === 'production' ? paths.appBuildPublic : paths.appPublic
+        ,
       }
     )
   // Stringify all values so we can feed into Webpack DefinePlugin
