@@ -52,6 +52,7 @@
     "assets-webpack-plugin": "^5.0.2",
     "autoprefixer": "^9.8.2",
     "babel-loader": "^8.1.0",
+    "babel-plugin-codegen": "^4.0.1",
     "babel-plugin-dynamic-import-node": "2.3.3",
     "babel-plugin-macros": "^2.8.0",
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",

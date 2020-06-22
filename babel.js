@@ -8,6 +8,8 @@ const preset = {
 
     // https://github.com/kentcdodds/babel-plugin-macros
     require.resolve('babel-plugin-macros'),
+    // https://github.com/kentcdodds/babel-plugin-codegen
+    require.resolve('babel-plugin-codegen'),
 
     // Stage 1
 
