@@ -40,7 +40,7 @@ function modify(baseConfig, params, webpack, userOptions = {}) {
   // Safely locate Babel-Loader in builder's webpack internals
   const babelLoader = config.module.rules.find(babelLoaderFinder)
   if (!babelLoader) {
-    throw new Error(`'babel-loader' required for nice 'MDX loader' work`)
+    return config
   }
 
   // Don't import md and mdx files with file-loader
