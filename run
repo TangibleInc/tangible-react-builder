@@ -1,20 +1,27 @@
 #!/usr/bin/env node
 
 const spawn = require('react-dev-utils/crossSpawn')
-const pkg = require('./package.json')
 
 let [command, ...args] = process.argv.slice(2)
+
+if (command==='-v') {
+
+  const pkg = require('./package.json')
+
+  console.log(pkg.name, pkg.version)
+  process.exit()
+}
+
 const knownCommands = ['build', 'dev', 'export']
 
-if (knownCommands.indexOf(command)<0) command = 'help'
+if (knownCommands.indexOf(command) < 0) command = 'help'
 
 const run = (...cmd) => spawn.sync('node', cmd, { stdio: 'inherit' })
 
 let result = {}
 
-if (command==='-v') {
-  console.log(pkg.name, pkg.version)
-} else if (command==='help') {
+switch (command) {
+case 'help':
   console.log(`
   Usage
     $ react-builder <command> [options]
@@ -24,7 +31,8 @@ if (command==='-v') {
     dev       Start the application in development mode
     export    Export the application as a static site
 `)
-} else if (command==='export') {
+  break
+case 'export':
   // Build for production
   result = run(require.resolve('./scripts/build'))
   // Export
@@ -32,7 +40,10 @@ if (command==='-v') {
     process.env.APP_EXPORT = 1
     result = run('build/server.js')
   }
-} else {
+
+  break
+
+default:
   result = run(require.resolve('./scripts/' + command))
 }
 
