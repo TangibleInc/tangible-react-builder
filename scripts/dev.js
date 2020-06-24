@@ -76,16 +76,17 @@ async function main() {
 
   // Watch for build complete
 
-  let doneNum = 0
+  let clientCompiled = 0
+  let serverCompiled = 0
 
   clientCompiler.hooks.done.tap('client', (stats) => {
-    doneNum++
-    if (clientOnly || doneNum===2) console.log()
+    clientCompiled++
+    if (clientOnly || clientCompiled===1 && serverCompiled===1) console.log()
   })
 
   serverCompiler && serverCompiler.hooks.done.tap('server', (stats) => {
-    doneNum++
-    if (doneNum===2) console.log()
+    serverCompiled++
+    if (clientCompiled===1 && serverCompiled===1) console.log()
   })
 
   const port = appConfig.port || clientConfig.devServer.port

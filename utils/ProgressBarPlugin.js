@@ -70,10 +70,16 @@ module.exports = function ProgressBarPlugin(options) {
     } else if (percent === 1) {
       var now = new Date
       var buildTime = (now - startTime) / 1000 + 's'
+      var buildTimestamp = now.getTime()
+      var sincePrevious = !ranAlready[name] ? 0 : buildTimestamp - ranAlready[name]
 
       bar && bar.terminate()
 
-      ranAlready[name] = true
+      ranAlready[name] = buildTimestamp
+      running = false
+
+      // Skip report if too frequent
+      if (sincePrevious && sincePrevious < 3000) return
 
       if (summary) {
         stream.write(chalk.green(`${name}`)+` Built in ${buildTime}\n`)
@@ -84,8 +90,6 @@ module.exports = function ProgressBarPlugin(options) {
       if (customSummary) {
         customSummary(buildTime)
       }
-
-      running = false
     }
   })
 }
