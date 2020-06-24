@@ -12,7 +12,7 @@ Build React full-stack applications and static sites
 npm install --dev @tangible/react-builder
 ```
 
-## Use
+## Developing the module
 
 #### Develop
 
