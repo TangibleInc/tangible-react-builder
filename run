@@ -3,7 +3,17 @@
 const path = require('path')
 const fs = require('fs')
 
-// Check that app has node_modules installed
+// Check that project has package.json
+const projectPackagePath = path.join(process.cwd(), 'package.json')
+if (!fs.existsSync(projectPackagePath)) {
+  console.log('No package.json found`')
+  process.exit()
+}
+
+const { name = '' } = require(projectPackagePath)
+if (name) console.log('Project', `"${name}"`)
+
+// Check that project has node_modules
 if (!fs.existsSync(path.join(process.cwd(), 'node_modules'))) {
   console.log('Please run `npm install` or `yarn`')
   process.exit()
