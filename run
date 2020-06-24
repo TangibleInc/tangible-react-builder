@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 
+const path = require('path')
+const fs = require('fs')
+
+// Check that app has node_modules installed
+if (!fs.existsSync(path.join(process.cwd(), 'node_modules'))) {
+  console.log('Please run `npm install` or `yarn`')
+  process.exit()
+}
+
 const spawn = require('react-dev-utils/crossSpawn')
 
 let [command, ...args] = process.argv.slice(2)
