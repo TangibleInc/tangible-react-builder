@@ -55,9 +55,9 @@ const write = (type, text, verbose) => {
   }
 
   console.log(textToLog)
-  if (['start', 'done', 'error'].indexOf(type) > -1) {
-    console.log()
-  }
+  // if (['start', 'done', 'error'].indexOf(type) > -1) {
+  //   console.log()
+  // }
 
   if (logObject) console.dir(verbose, { depth: 15 })
 }
