@@ -2,70 +2,91 @@
 
 const path = require('path')
 const fs = require('fs')
-
-// Check that project has package.json
-const projectPackagePath = path.join(process.cwd(), 'package.json')
-if (!fs.existsSync(projectPackagePath)) {
-  console.log('No package.json found`')
-  process.exit()
-}
-
-const { name = '' } = require(projectPackagePath)
-if (name) console.log('Project', `"${name}"`)
-
-// Check that project has node_modules
-if (!fs.existsSync(path.join(process.cwd(), 'node_modules'))) {
-  console.log('Please run `npm install` or `yarn`')
-  process.exit()
-}
-
+const chalk = require('chalk')
 const spawn = require('react-dev-utils/crossSpawn')
+
+const appRoot = process.cwd()
+const appPackagePath = path.join(appRoot, 'package.json')
 
 let [command, ...args] = process.argv.slice(2)
 
-if (command==='-v') {
+const knownCommands = [
+  'build',
+  'dev',
+  'export',
+  'help',
+  'new',
+  'version',
+]
 
-  const pkg = require('./package.json')
-
-  console.log(pkg.name, pkg.version)
-  process.exit()
+if (knownCommands.indexOf(command) < 0) {
+  if (command) console.log(chalk.yellow(`Unknown command "${command}"`))
+  command = 'help'
 }
 
-const knownCommands = ['build', 'dev', 'export']
+// Check that project has package.json and node_modules
 
-if (knownCommands.indexOf(command) < 0) command = 'help'
+if (command==='new' || command==='help') {
+
+  // Pass through
+
+} else if (command==='version') {
+
+  const {
+    name, version
+  } = require('./package.json')
+
+  console.log(`${name} ${version}`)
+
+  process.exit()
+
+} else if (!fs.existsSync(appPackagePath)) {
+
+  console.log(chalk.yellow('No package.json found'))
+  command = 'help'
+
+} else {
+
+  const { name } = require(appPackagePath)
+
+  if (name) console.log(`Project "${name}"\n`)
+
+  if (!fs.existsSync(path.join(appRoot, 'node_modules'))) {
+
+    console.log(chalk.yellow('Please run "npm install" or "yarn"'))
+    command = 'help'
+  }
+}
 
 const run = (...cmd) => spawn.sync('node', cmd, { stdio: 'inherit' })
 
 let result = {}
 
 switch (command) {
-case 'help':
-  console.log(`
-  Usage
-    $ react-builder <command> [options]
-
-  Available Commands
-    build     Build the application
-    dev       Start the application in development mode
-    export    Export the application as a static site
-`)
-  break
 case 'export':
+
   // Build for production
-  result = run(require.resolve('./scripts/build'))
+  result = require('./scripts/build') // run(require.resolve('./scripts/build'))
+
   // Export
   if (!result.signal) {
-    process.env.APP_EXPORT = 1
-    result = run('build/server.js')
+
+    // Resolve from built application
+    const serverPath = path.join(appRoot, 'build', 'server.js')
+
+    if (fs.existsSync(serverPath)) {
+      process.env.APP_EXPORT = 1
+      result = run(serverPath)
+    } else {
+      console.log(chalk.red('Server not found at build/server.js'))
+    }
   }
 
+  process.exit(
+    !result ? 0 : (result.signal ? 1 : result.status)
+  )
+
   break
-
 default:
-  result = run(require.resolve('./scripts/' + command))
+  result = require('./scripts/' + command) // run(require.resolve('./scripts/' + command))
 }
-
-process.exit(
-  result.signal ? 1 : result.status
-)
