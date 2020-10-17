@@ -12,24 +12,6 @@ Build React full-stack applications and static sites
 npm install --dev @tangible/react-builder
 ```
 
-## Developing the module
+## Usage
 
-#### Develop
-
-Build during development - watch files and rebuild
-
-```sh
-npm run dev
-```
-
-After running this command, it will wait and rebuild scripts and styles as you edit the files.
-
-When you're done, press CTRL+C to exit the process.
-
-#### Build
-
-Build for production
-
-```sh
-npm run build
-```
+See [React Builder Example](https://github.com/TangibleInc/react-builder-example).
